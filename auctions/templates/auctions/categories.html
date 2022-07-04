@@ -1,0 +1,15 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    {% if categories %}
+        <ol>
+        {% for category in categories %}
+            <li>
+                <a href="{% url 'categoty_auctions' category.id %}">{{ category.name }}</a>
+            </li>
+        {% endfor %}
+        </ol>
+    {% else %}
+    <h4 class="text-muted">List is empty</h4>
+    {% endif %}
+{% endblock %}

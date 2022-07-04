@@ -1,0 +1,48 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>{{ page_header }}</h2>
+    {% if auctions %}
+    <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Item name</th>
+            <th>Description</th>
+            <th>Current price</th>
+            <th>Image</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for auction in auctions %}
+            <tr>
+                <td>
+                <a href="{% url 'auction' auction.auction.id %}"">
+                    {% if auction.auction.active == False %}
+                    {{ auction.auction.item_name }} (Closed)
+                    {% else %}
+                    {{ auction.auction.item_name }}
+                    {% endif %}
+                </a>
+                </td>  
+                <td>
+                    {{auction.auction.item_description}}
+                </td>   
+                <td>{{ auction.maxbid }}</td>
+                <td>
+                    {% if auction.auction.picture_url != ''%}
+                    <img src="{{ auction.auction.picture_url }}" alt="{{ auction.auction.item_name }}" class="mx-auto d-block" width="220" height="170">
+                    {% else %}
+                    <label class="text-muted">No image</label>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+        <h4 class="text-muted">List is empty</h4>
+    {% endif %}
+    {% if message %}
+        <h4>{{ message }}</h4>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,143 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+{% if auction %}
+
+<div style="height:50px; line-height:10px;">
+    <span style="vertical-align:text-bottom; font-size: 46px;">{{ auction.item_name }}</span>
+    <span style="vertical-align:text-bottom;">
+        {% if auction.active %}
+        <label class="text-success" style="font-size: 20px;vertical-align: bottom;">(Active)</label>
+        {% else %}
+        <label class="text-muted">(Closed)</label>
+        {% endif %}
+    </span>
+</div>
+
+
+<div class="row">
+    <div class="col-sm">
+        {% if user.is_authenticated and user == auction.author and auction.active %}
+        <form action="{% url 'close_auction' auction.id %}" method="post">
+            {% csrf_token %}
+            <input type="submit" name="Close auction" id="close_auction" value="Close auction">
+        </form>
+        {% endif %}
+    </div>
+    <div class="col-sm"></div>
+    <div class="col-sm"></div>
+    <div class="col-sm"></div>
+    <div class="col-sm"></div>
+    <div class="col-sm">
+        {% if user.is_authenticated %}
+        {% if is_watched %}
+        <form action="{% url 'remove_from_watchlist' auction.id %}" method="post">
+            {% csrf_token %}
+            <input type="submit" name="Remove from watchlist" id="remove_from_watchlist" value="Remove from watchlist">
+        </form>
+        {% else %}
+        <form action="{% url 'add_to_watchlist' auction.id %}" method="post">
+            {% csrf_token %}
+            <input type="submit" name="Add to watchlist" id="Add_to_watchlist" value="Add to watchlist">
+        </form>
+        {% endif %}
+        {% endif %}
+    </div>
+</div>
+
+{% if winner_user %}
+<p></p>
+<div class="alert alert-success">
+    <strong>Congratulations!</strong> You win auction!
+</div>
+{% endif %}
+
+{% if user.is_authenticated and bidform and auction.active %}
+{% if bid_error_message %}
+{% if bid_error_message != '' %}
+<div class="alert alert-danger">
+    {{ bid_error_message }}
+</div>
+{% endif %}
+{% elif bid_successfull == True %}
+<div class="alert alert-success">
+    You have successfuly made a bid!
+</div>
+{% endif %}
+{% endif %}
+
+<p></p>
+<div class="row">
+    <div class="col-sm-4">
+        <div class="container">
+            <p class="text-muted">Decription:</p>
+            <p>{{ auction.item_description }}</p>
+            <p class="text-muted">Category:</p>
+            {% if auction.category %}
+            {{ auction.category.name }}
+            {% else %}
+            <p>No category</p>
+            {% endif %}
+            <p class="text-muted">Selller:</p>
+            <p>{{ authorFullName }}</p>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        {% if auction.picture_url != ''%}
+        <div>
+            <img src={{ auction.picture_url }} class="img-thumbnail" alt="picture url" width="304" height="236">
+            <p></p>
+        </div>
+        {% endif %}
+        <h3>Stat bid:</h3>
+        <p class="text-danger" style="font-size: 18px;">{{ auction.start_bid }}</p>
+        <h3>Current bid:</h3>
+        <p class="text-danger" style="font-size: 18px;">{{ current_bid }}</p>
+
+        {% if user.is_authenticated and bidform and auction.active %}
+        <div class="form-group">
+            <form action="{%url 'auction' auction.id %}" method="post">
+                {% csrf_token %}
+                {{ bidform.as_p}}
+                <input type="submit" value="Bid" class="btn btn-success">
+            </form>
+        </div>
+        {% endif %}
+    </div>
+    <div class="col-sm-4">
+        <h3>Comments:</h3>
+        {% if user.is_authenticated %}
+        <div class="container">
+            <div class="form-group">
+                <form action="{%url 'auction' auction.id %}" method="post">
+                    {% csrf_token %}
+                    <label for="comment_text">Add comment:</label>
+                    <textarea class="textarea" name="comment_text" cols="40" rows="5" maxlength="200"
+                        placeholder="Type your comment here."></textarea>
+                    <input type="submit" value="Add comment" class="btn btn-success">
+                </form>
+            </div>
+            {% endif %}
+            <div id="comments_group" class="form-group">
+                {% for comment in comments %}
+                <div>
+                    <div>
+                        <label class="text-secondary" style="font-size: 12px;">{{ comment.author }}
+                            ({{comment.date}})</label>
+                    </div>
+                    <div>
+                        <label>{{ comment.text }}</label>
+                    </div>
+                    <p></p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<h4 class="text-muted">Something gone wrong</h4>
+{% endif %}
+
+{% endblock %}
