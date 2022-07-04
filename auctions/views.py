@@ -12,8 +12,7 @@ from .forms import AuctionForm, BidForm
 from django.db.models import Max
 
 def index(request):
-    # auctions = Auction.objects.filter(active=True)
-    # max_bids = Bid.objects.raw("SELECT auction, MAX(amount) FROM Bid GROUP BY auction")
+ 
     active_auctions = Auction.objects.filter(active=True)
 
     auctions = auctions_list_with_max_bids(active_auctions)
@@ -22,6 +21,16 @@ def index(request):
         "auctions": auctions,
         "page_header": "Active auctions"
     })
+
+@login_required
+def my_lots(request):
+    current_user = get_user(request=request) 
+    a = Auction.objects.filter(author=current_user)  
+    auctions = auctions_list_with_max_bids(a)
+    return render(request, "auctions/index.html", {
+        "auctions": auctions,
+        "page_header": "My lots"
+    }) 
 
 def categoties(request):
     c = Category.objects.all()
