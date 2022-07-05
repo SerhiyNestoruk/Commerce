@@ -15,9 +15,9 @@ class User(AbstractUser):
 
 
 class Auction(models.Model):
-    item_name = models.CharField(max_length=64, blank=False)
-    item_description = models.TextField(max_length=200, blank=False)
-    start_bid = models.PositiveIntegerField(blank=False)
+    item_name = models.CharField(max_length=200, blank=False)
+    item_description = models.TextField(max_length=500, blank=False)
+    start_bid = models.DecimalField(max_digits=15, decimal_places=2, blank=False)
     picture_url = models.URLField(blank=True)
     category = models.ForeignKey(Category,on_delete=models.CASCADE, null=True, blank=True)
     active = models.BooleanField(default=True)
@@ -33,7 +33,7 @@ class Auction(models.Model):
         return f"No {self.pk} - {self.item_name}. State: {state}"
         
 class Bid(models.Model):
-    amount = models.PositiveIntegerField(blank=False)
+    amount = models.DecimalField(max_digits=15, decimal_places=2, blank=False)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now=True)
     auction = models.ForeignKey(Auction, on_delete=models.CASCADE)
@@ -43,7 +43,7 @@ class Bid(models.Model):
 
 
 class Comment(models.Model):
-    text = models.TextField(max_length=200)
+    text = models.TextField(max_length=500)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     auction = models.ForeignKey(Auction, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now=True)
