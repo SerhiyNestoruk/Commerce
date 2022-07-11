@@ -2,6 +2,11 @@
 
 {% block body %}
 
+{% if message %}
+<div class="alert alert-danger">
+    Start bid must be more than 0.
+</div>
+{% endif %}
 {% if form %}
     <form action="{%url 'new'%}" method="post">
     {% csrf_token %}

@@ -161,8 +161,14 @@ def new(request):
         picture_url = request.POST["picture_url"]
         category_pk = request.POST["category"]
 
+        if float(start_bid) < 0:
+            return render(request, "auctions/new.html", {
+            "form": form,
+            "message": True
+        })
+
         if category_pk != "":
-            category = categoy = Category.objects.get(pk=category_pk)
+            category = Category.objects.get(pk=category_pk)
         else:
             category = None
 
@@ -177,12 +183,14 @@ def new(request):
             })
         else:
             return HttpResponseRedirect(reverse("new"), {
-                "form": form
+                "form": form,
+                "message": True
             })
     else:
         form = AuctionForm()
         return render(request, "auctions/new.html", {
-            "form": form
+            "form": form,
+            "message": False
         })
 
 
