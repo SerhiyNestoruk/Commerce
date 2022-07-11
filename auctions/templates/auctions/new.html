@@ -8,7 +8,7 @@
 </div>
 {% endif %}
 {% if form %}
-    <form action="{%url 'new'%}" method="post">
+    <form action="{%url 'new'%}" method="post" style="padding: 10px;">
     {% csrf_token %}
         {% for field in form %}
         <div class="form-group">
